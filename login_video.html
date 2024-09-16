@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="icon" type="image/png" href="img login/favicon_app.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    .login-container {
+    background: rgba(2, 39, 66, 0.2); /* Color específico */
+    border-radius: 16px; /* Bordes más redondeados */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Sombra más difusa */
+    backdrop-filter: blur(5px); /* Aplicar desenfoque */
+    -webkit-backdrop-filter: blur(10px); /* Soporte para Safari */
+    border: 1px solid rgba(2, 39, 66, 0.3); /* Borde semitransparente */
+    padding: 20px;
+    max-width: 500px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.login-image {
+    width: 40%;
+    max-width: 40%;
+    text-align: center;
+    padding: 20px;
+}
+
+h2 {
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    text-align: left;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(2, 39, 66, 0.3); /* Borde semitransparente */
+    border-radius: 16px; /* Bordes más redondeados */
+    background: rgba(2, 39, 66, 0.2); /* Color específico */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Sombra más difusa */
+    backdrop-filter: blur(5px); /* Aplicar desenfoque */
+    -webkit-backdrop-filter: blur(10px); /* Soporte para Safari */
+    box-sizing: border-box;
+    color: white; /* Color del texto */
+}
+
+button {
+      background-color: #022742;
+      color: rgb(255, 255, 255);
+      border: none;
+      padding: 12px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin-top: 10px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      background: rgba(2, 39, 66, 0.2); /* Color específico */
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Sombra más difusa */
+      backdrop-filter: blur(10px); /* Aplicar desenfoque */
+      
+    }
+
+button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300%;
+      height: 300%;
+      background-color:rgba(2, 39, 66, 0.2); /* Color específico */
+      transition: width 0.3s ease, height 0.3s ease;
+      border-radius: 50%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    button:hover::before {
+      width: 0;
+      height: 0;
+    }
+
+    button:hover {
+      background-color: #4692ab;
+      box-shadow:
+      0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #fff,
+        0 0 40px #fff,
+        0 0 80px #fff,
+        0 0 90px #fff,
+        0 0 100px #fff,
+        0 0 150px #fff;
+    }
+
+    .neon-text {
+    color: #fff;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #fff,
+        0 0 40px #fff,
+        0 0 80px #fff,
+        0 0 90px #fff,
+        0 0 100px #fff,
+        0 0 150px #fff;
+}
+
+    .login-form {
+      max-width: 60%;
+      width: 100%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <video id="background-video" autoplay muted loop>
+    <source src="videoeuroAudio.mp4" type="video/mp4">
+    Tu navegador no soporta la reproducción de videos.
+  </video>
+  <div class="login-container">
+    <div class="login-image">
+      <img src="img login/logo_euro_alico.png" alt="Logo Euro" style="width: 150px; height: auto;">
+    </div>
+    <div class="login-form">
+      <h2 class="neon-text">Login</h2>
+      <div class="neon-text">
+        Welcome to EURO
+      </div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="usuario" class="neon-text">User:</label>
+          <input type="text" id="usuario" list="user-datalist" name="usuario" required>
+          <datalist id="user-datalist"></datalist>
+        </div>
+        <div class="form-group">
+          <label for="contraseña" class="neon-text">Password:</label>
+          <input type="password" id="contraseña" name="contraseña" required>
+        </div>
+        <button type="button" onclick="validarLogin()">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    async function sessionEpicor(url, userName, password) {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            "accept": "application/json",
+            userName,
+            password
+          }
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        return result != null;
+      } catch (error) {
+        console.error('Error posting data:', error);
+        return false;
+      }
+    }
+
+    async function validarLogin() {
+    const username = document.getElementById("usuario").value;
+    const password = document.getElementById("contraseña").value;
+    const url = "https://centralusdtapp73.epicorsaas.com/SaaS5333/TokenResource.svc/";
+    const allowedUsers = ["ali.katherine_ochoa", "esteban_salinas", "fredy_opsina"];
+
+    if (!allowedUsers.includes(username)) {
+        document.getElementById("error-message").innerText = "Usuario no autorizado.";
+        return;
+    }
+
+    const dataResponse = await sessionEpicor(url, username, password);
+    if (dataResponse === true) {
+        sessionStorage.setItem('loggedin', 'true');
+
+        // Obtener el nombre del archivo dinámico solicitado por el usuario
+        const requestedFileName = sessionStorage.getItem('requestedFileName');
+
+        // Redirigir a la página correspondiente según el nombre del archivo solicitado
+        if (requestedFileName) {
+            window.location.href = requestedFileName;
+        } else {
+            alert("No se encontró el nombre del archivo solicitado.");
+        }
+    } else {
+        alert("Usuario o contraseña incorrectos. Por favor, inténtalo de nuevo.");
+    }
+}
+
+document.getElementById('login-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    validarLogin();
+});
+
+     //controlar velocidad del video y segundo de inicio y fin
+     const video = document.getElementById('background-video');
+
+video.addEventListener('loadedmetadata', function() {
+  video.currentTime = 12.5; // Comienza el video desde el segundo 14
+});
+
+video.addEventListener('timeupdate', function() {
+  if (video.currentTime >= 88) {
+    video.currentTime = 12.5; // Reinicia el video al segundo 14 cuando llega al segundo 53
+  }
+});
+
+video.playbackRate = 0.8; // Ajusta la velocidad del video
+
+// Función para activar el sonido del video
+function activateVideoSound() {
+  video.muted = false;
+  video.play(); // Asegura que el video esté reproduciéndose
+}
+
+// Agregar evento click al fondo del video
+document.body.addEventListener('click', activateVideoSound);
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eurocopa</title>
+  <link rel="icon" type="image/png" href="img app/favicon_app.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+    .banner {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 20px;
+    }
+    .container {
+      position: relative;
+      height: auto;
+      display: flex;
+      justify-content: flex-start;
+      background-color: #143DDA; /* Fondo azul contenedor principal por defecto */
+      border-radius: 5px; /* Bordes redondeados */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra */
+    }
+    .column {
+      flex: 1;
+      min-width: 300px;
+      margin: 10px;
+      text-align: center;
+    }
+    .team-list {
+      list-style: none;
+      padding: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .team-item {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    .team-item img {
+      width: 30px;
+      height: auto;
+      margin-right: 10px;
+    }
+    .team-name {
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 20px;
+    }
+    .selected-team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .team-logo {
+      width: 100px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+    .scoreboard {
+      background-color: #fff;
+      border: 2px solid #000;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .score {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .time-container {
+      text-align: center;
+    }
+    .time-label {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .time {
+      font-size: 80px;
+      font-family: Impact, sans-serif;
+      color: white; /* Color de fuente blanco */
+      -webkit-text-stroke-width: 2px; /* Ancho del contorno */
+      -webkit-text-stroke-color: black; /* Color del contorno */
+    }
+    .controls {
+      position: fixed;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Alinea verticalmente los elementos hijos en el centro */
+      z-index: 2; /* Asegura que los botones estén delante del contenedor */
+      display: inline-block;
+    }
+    .controls button {
+      margin-bottom: 10px;
+      z-index: 3; /* Asegura que los botones estén delante del contenedor */
+      background-color: white; /* Cambia el color de fondo de los botones "+" y "-" a blanco */
+      color: #ffffff; /* Cambia el color del texto de los botones "+" y "-" */
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Agrega sombra hacia la derecha a los botones "+" y "-" */
+      font-size: 24px; /* Aumenta el tamaño de la fuente de los botones "+" y "-" */
+      text-shadow: 2px 2px 2px black; /* Agrega un reborde negro alrededor del texto de los botones "+" y "-" */
+      width: 52px; /* Define el ancho fijo para los botones "+" y "-" */
+      height: 52px; /* Define el alto fijo para los botones "+" y "-" */
+      line-height: 40px; /* Alinea verticalmente el texto en el centro del botón */
+      padding: 0; /* Elimina el relleno interno del botón */
+      
+    }
+         .controls button:first-child {
+          background-color: #4CAF50; /* Cambia el color de fondo del botón "+" a verde */
+        }
+
+        .controls button:last-child {
+          background-color: #EE1928; /* Cambia el color de fondo del botón "-" a rojo */
+        }
+
+        .controls button:hover {
+          filter: brightness(1.2); /* Aumenta el brillo al pasar el cursor sobre los botones "+" y "-" */
+        }
+
+    .save-button {
+      position: fixed;
+      top: calc(50% + 130px);
+      right: 20px;
+      transform: translateY(-50%);
+      background-color: white; /* Cambia el color de fondo del botón "Finalizar" a blanco */
+      color: #000000; /* Cambia el color del texto del botón "Finalizar" */
+      box-shadow: 10px 15px 15px rgba(0, 0, 0, 1); /* Agrega sombra hacia la derecha al botón "Finalizar" */
+      z-index: 2; /* Asegura que el botón 'Finalizar' esté delante del contenedor */
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .positions {
+      background-color: rgba(255, 255, 255, 0.8);
+      border: 2px solid #000;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      position: fixed;
+      top: 50%;
+      left: 20px;
+      transform: translateY(-50%);
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+    .positions-list {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+    }
+    .position-item {
+      margin-bottom: 10px;
+    }
+    .position-item span {
+      font-weight: bold;
+    }
+
+    #floatingLogo {
+      width: 60px; /* Ajusta el ancho del logo */
+      height: auto; /* Mantenemos la proporción */
+      margin-right: 10px;
+    }
+
+    #floatingScore {
+      font-size: 20px; /* Ajusta el tamaño del texto widget flotante 'gol' */
+    }
+
+    #floatingTime {
+      font-size: 24px; /* Ajusta el tamaño del texto del tiempo */
+      font-family: Impact, sans-serif;
+      color: rgb(18, 18, 18); /* Color de fuente blanco */
+      /*-webkit-text-stroke-width: 2px; /* Ancho del contorno */
+      -webkit-text-stroke-color: black; /* Color del contorno */
+    }
+    .floating-widget {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #fff;
+      border: 2px solid #000;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+      width: 60px; /* Cambia el ancho del widget flotante */
+    }
+    .team-logo-small {
+      width: 40px;
+      height: auto;
+      margin-right: 5px;
+    }
+    #pdfViewer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .pdfPage {
+      border: 1px solid #ccc;
+      margin: 10px 0;
+    }
+
+    input[type=file] {
+      display: block; /* Cambia el tipo de visualización a bloque */
+      margin: 0 auto; /* Margen automático en los lados izquierdo y derecho para centrarlo */
+    }
+        /* Nuevo estilo para la lista desplegable */
+        
+        #teamDropdown {
+      font-size: 29px; /* Tamaño de fuente */
+      font-family: Impact, sans-serif; /* Tipo de fuente */
+      color: rgb(8, 8, 8); /* Color del texto */
+      border: 1px solid black; /* Borde negro */
+      background-color: transparent; /* Fondo transparente */
+    }
+    /* Estilos para la notificación */
+    .notification {
+        position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(19, 225, 84, 0.9); /* Amarillo para goles */
+      color: transparent; /* Hace el color de fuente transparente */
+      padding: 50px; /* Aumenta el padding para hacer la notificación más grande */
+      border-radius: 10px;
+      font-size: 50px; /* Aumenta el tamaño del texto */
+      z-index: 9999;
+      display: none;
+      -webkit-text-stroke-width: 2px; /* Ancho del contorno */
+      -webkit-text-stroke-color: black; /* Color del contorno */
+      font-family: Impact, sans-serif; /* Utiliza la fuente Impact */
+    }
+
+    .notification.error {
+      background-color: rgba(255, 0, 0, 0.8); /* Rojo semi-transparente */
+    }
+      /*Botón de grabar*/
+        .floating-record-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #FC9215; /* Cambia el color de fondo según tu preferencia */
+      color: rgb(0, 0, 0);
+      box-shadow: 10px 15px 15px rgba(0, 0, 0, 2); /* Agrega sombra hacia la derecha al botón "Grabar" */
+      z-index: 9999;
+    }
+
+    .floating-record-button:hover {
+      background-color: #ff8a14; /* Cambia el color de fondo al pasar el cursor */
+    }
+
+    /*Barra lateral derecha para contener los botones de control */
+    .fixed-sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: 150px;
+      background: linear-gradient(to bottom, #4692ab, #022742); /* Aplica el degradado de azul petróleo */
+      z-index: 1; /* Asegura que el contenedor esté detrás de los botones */
+      /* Agrega más estilos según tus necesidades */
+    }
+
+      /*Estilos para el botón Home*/
+        #homeButton {
+      position: fixed;
+      top: calc(50% + 170px); /* Posición vertical más abajo que el botón "Finalizar" */
+      right: 30px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #ffffff;
+      box-shadow: 10px 15px 15px rgba(0, 0, 0, 1); /* Aumenta la intensidad de la sombra hacia la derecha para el botón "Home" */
+      color: rgb(0, 0, 0);
+      z-index: 2; /* Asegura que el botón esté delante del contenedor */
+    }
+
+
+    /* CSS para el contenedor de comentarios */
+    .comment-container {
+      position: fixed;
+      bottom: 20px; /* Espacio desde el borde inferior de la pantalla */
+      left: 50%; /* Centra horizontalmente */
+      transform: translateX(-50%); /* Centra horizontalmente */
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between; /* Alinea los elementos alrededor del nuevo botón */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 90%; /* Ancho del contenedor */
+      max-width: 200px; /* Ancho máximo del contenedor */
+    }
+
+    /* CSS para el cuadro de texto */
+    .comment-input {
+      flex: 0.8; /* El cuadro de texto ocupa todo el espacio restante */
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 8px;
+      margin-right: -50px; /* Espacio entre el cuadro de texto y los botones */
+      margin-left: 150px; /* margen izquierdo para desplazar el cuadro de texto del contenedor principal */
+      width: 500px; /* Ancho del cuadro de texto */
+      max-width: 900px; /* Ancho máximo del cuadro de texto */
+}
+
+    /* Botón de FLECHA 'enviar comentarios' */
+    .comment-button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-right: 200px; /* Margen derecho negativo para acercar el botón al cuadro de texto */
+    }
+
+    .comment-button:hover {
+      background-color: #45a049;
+    }
+
+ 
+
+ /* CSS para el fondo del contenedor principal que aloja: botón de enviar comentarios */
+ .custom-background {
+        background: linear-gradient(to bottom, #255f71, #02243d);
+        width: 70%; /* Cambia el valor del ancho según sea necesario */
+        max-width: 1200px; /* Opcional: establece un ancho máximo para evitar que el contenedor se vuelva demasiado ancho en pantallas grandes */
+        margin: 0 auto; /* Centra el contenedor horizontalmente */
+        padding: 10px; /* Agrega un poco de espacio interno al contenedor */
+        box-sizing: border-box; /* Incluye el padding en el ancho total del contenedor */
+}       
+
+   
+
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+#stats-container {
+    padding: 20px;
+}
+
+#stats-container h2 {
+    margin: 0 0 10px 0;
+}
+
+
+#stored-comments {
+    /* Asegura que los comentarios se alineen a la izquierda */
+    text-align: left;
+}
+
+.comment {
+    /* Establece margen a la izquierda de los comentarios */
+    margin-left: 10px;
+}
+
+.comment .delete-button {
+    /* Ajusta el espacio entre el botón de eliminar y el comentario */
+    margin-right: 5px;
+}
+
+
+
+.delete-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 19px;
+    font-weight: bold; /* Aplica negrita */
+    color: rgb(9, 49, 144);
+}
+
+/* Barra horizontal fija que contiene el cuadro de texto comentarios*/
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: linear-gradient(to bottom, #033050, #022742);
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+#comments-container {
+    flex: 1;
+}
+
+#comment-text {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+}
+
+#submit-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#submit-button img {
+    width: 24px;
+    height: 24px;
+}
+
+#statistics-section {
+    padding: 20px;
+    margin-top: 20px;
+}
+
+#statistics-section h2, #statistics-section h3 {
+    margin-top: 0;
+}
+
+#team-positions {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+/* Estilos para centrar y cambiar el título */
+.bitacora-title {
+  font-size: 60px; /* Cambia el tamaño del texto */
+  font-weight: bold; /* Aplica negrita */
+  font-family: 'Nombre de la Fuente', sans-serif; /* Utiliza la fuente de Google */
+  color: #022742;
+    text-align: center;
+}
+/* Estilos para centrar y cambiar el título acta arbitral */
+.acta-title {
+  font-family: 'Nombre de la Fuente', sans-serif; /* Utiliza la fuente de Google */
+  color: #022742;
+  font-weight: bold;
+  font-size: 40px;
+  text-align: left;
+  
+}
+
+/* estilos sección comentarios*/
+#comments-section {
+  max-width: 900px; /* Reducir el ancho máximo */
+  margin: 20px auto; /* Centrar la sección */
+  background-color: #ffffff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el contenedor de comentarios */
+#comments-container {
+    display: flex;
+    align-items: center; /* Centrar verticalmente */
+    margin-bottom: 10px; /* Espacio inferior */
+}
+
+/* Estilos para el textarea de comentarios */
+#comments-container textarea {
+    flex: 1; /* Ocupa el espacio restante */
+    background: #ffffff;
+    padding: 10px; /* Espaciado interno */
+    border: 1px solid #ccc; /* Borde del textarea */
+    border-radius: 4px; /* Bordes redondeados */
+    resize: none; /* No permitir redimensionar */
+    max-width: calc(100% - 150px); /* Ajusta el ancho máximo */
+    height: 30px; /* Ajusta la altura */
+    font-size: 20px; /* Tamaño de la letra */
+    color: #000000; /* Color de la letra */
+    margin-left: 250px; /* Margen a la izquierda */
+}
+
+/* Estilos para el botón de enviar */
+#submit-button {
+    background: #4692ab; /* Color de fondo */
+    border: none; /* Sin borde */
+    color: white; /* Color de texto */
+    padding: 10px 20px; /* Espaciado interno */
+    margin-right: 400px; /* Margen a la derecha */
+    border-radius: 4px; /* Bordes redondeados */
+    cursor: pointer; /* Cursor tipo puntero */
+    font-size: 25px; /* Tamaño de la letra */
+    height: 50px; /* Ajusta la altura */
+    margin-top: -10px;
+}
+
+
+.team-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px; /* Aumentamos el espacio entre equipos */
+    border-bottom: 1px dotted #ccc; /* Línea punteada entre equipos */
+    padding-bottom: 10px; /* Espacio debajo de cada equipo */
+  }
+
+  .team-logo-small {
+    width: 40px;
+    height: auto;
+    margin-right: 10px;
+  }
+
+  .team-info {
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px; /* Espacio entre el nombre del equipo y los comentarios */
+  }
+
+  .team-name {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  .comment-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Asegura que la lista de comentarios ocupe todo el espacio disponible */
+  }
+
+  .comment {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #f0f0f0; /* Color de fondo para los comentarios */
+  }
+
+  .delete-button {
+    margin-right: 5px;
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  }
+
+/* sección acumlado tabla*/
+/* Estilos para la sección Acumulado */
+.accumulated-section {
+  max-width: 900px; /* Reducir el ancho máximo */
+  margin: 20px auto; /* Centrar la sección */
+  background-color: #ffffff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+
+/*título de la sección tabla posiciones fija*/
+.accumulated-section h2 {
+  font-family: 'Nombre de la Fuente', sans-serif; /* Utiliza la fuente de Google */
+  color: #022742;
+  font-weight: bold;
+  font-size: 40px;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+/* Estilos para la tabla de posiciones */
+#accumulatedTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+#accumulatedTable th,
+#accumulatedTable td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+/* color de los headers de la tabla*/
+#accumulatedTable th {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+#accumulatedTable tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+#accumulatedTable tbody tr:hover {
+  background-color: #4692ab;
+}
+
+#accumulatedTable img.team-logo-small {
+  width: 30px;
+  height: auto;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+
+.neon-text {
+  color: #fff;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #fff,
+        0 0 40px #fff,
+        0 0 80px #fff,
+        0 0 90px #fff,
+        0 0 100px #fff,
+        0 0 150px #fff;
+    }
+
+    .white-neon-text {
+      color: #fff; /* Color blanco */
+      text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #fff,
+        0 0 40px #fff,
+        0 0 80px #fff,
+        0 0 90px #fff,
+        0 0 100px #fff,
+        0 0 150px #fff;
+}
+
+
+#audioeuro {
+  display: none;
+}
+
+
+  </style>
+</head>
+<body>
+  <audio id="backgroundAudio" autoplay  volume="0.2">
+    <source src="img app/audioeuro.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+  <audio id="goalAudio">
+    <source src="golaudio.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+<img class="banner" src="img app/bannerCopa2_animation.png" alt="Banner">
+
+<div class="container neon-text" id="container">
+  <div class="column" id="teamColumn">
+    <h2>Selecciones</h2>
+    <select id="teamDropdown" onchange="selectTeam(this.value)">
+      <option disabled selected>Elije aquí👉🏻</option>
+      <option value="España"> <img src="img app/españa.png" alt="España"> España</option>
+      <option value="Inglaterra"> <img src="img app/inglaterra.png" alt="Inglaterra"> Inglaterra</option>
+      <option value="Italia"> <img src="img app/italia.png" alt="Italia"> Italia</option>
+      <option value="Portugal"> <img src="img app/portugal.png" alt="Portugal"> Portugal</option>
+      <option value="Francia"> <img src="img app/francia.png" alt="Francia"> Francia</option>
+      <option value="Alemania"> <img src="img app/alemania.png" alt="Alemania"> Alemania</option>
+      <option value="Suiza"> <img src="img app/suiza.png" alt="Suiza"> Suiza</option>
+    </select>
+  </div>
+  
+  <div class="column" id="selectedTeamColumn">
+    <div class="selected-team">
+      <h2>Equipo en juego</h2>
+      <div class="subcolumn">
+        <img class="team-logo" id="selectedTeamLogo" src="" alt="Logo Equipo">
+      </div>
+      <div class="subcolumn">
+        <div class="score" id="teamScore">0</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="column" id="timeColumn">
+    <div class="time-container">
+      <div class="time-label">Tiempo</div>
+      <div class="time" id="time">15:00</div>
+    </div>
+    <div class="button-container">
+      <div class="controls">
+        <button onclick="incrementScore()">+</button>
+        <button onclick="decrementScore()">-</button>
+      </div>
+      <button class="save-button" onclick="saveResult();updateAccumulatedTable();">Finalizar</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="pdfInput" accept=".pdf">
+<div id="pdfViewer"></div>
+<div class="floating-widget" id="floatingWidget">
+  <img class="team-logo-small" id="floatingLogo" src="" alt="Logo Equipo">
+  <div id="floatingScore"></div>
+  <div id="floatingTime"></div>
+</div>
+<div class="positions" id="positionsContainer">
+  <h2>Posiciones</h2>
+  <ul class="positions-list" id="positionsList"></ul>
+</div>
+
+<div id="notification" class="notification"></div>
+<button id="recordButton" class="floating-record-button">Grabar</button>
+<div class="fixed-sidebar"></div>
+<button id="homeButton">Home</button> <!-- Botón "Home" agregado -->
+
+<div id="stats-container">
+  <!-- Aquí es donde se mostrarán los comentarios almacenados -->
+</div>
+
+<div class="bottom-bar">
+  <div id="comments-container">
+      <!-- Aquí se agregará el cuadro de texto usando JavaScript -->
+  </div>
+  <button class="neon-text" id="submit-button" alt="enviar">⟁</button>
+</div>
+<div id="statistics-section">
+  <h2 class="bitacora-title">BITÁCORA VAR</h2>
+  <div id="comments-section">
+      <h3 class="acta-title">Acta arbitral.</h3>
+      <div id="stored-comments">
+          <!-- Aquí se mostrarán los comentarios almacenados -->
+      </div>
+  </div>
+</div>
+<div id="accumulatedSection" class="accumulated-section">
+    <h2>Tabla general.</h2>
+    <table id="accumulatedTable">
+      <thead>
+        <tr>
+            <th>Posición</th>
+            <th>Selección</th>
+            <th>Equipo</th>
+            <th>Goles</th>
+            <th>Autogoles</th>
+            <th>Total Goles</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Aquí se agregarán las filas con los datos -->
+      </tbody>
+    </table>
+  </div>
+<img class="banner" src="img app/BannerCopaPie2_animation.png" alt="Banner">
+
+<script src="script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+<script>
+
+  // Verificar si el usuario está autenticado
+if (!sessionStorage.getItem('loggedin')) {
+    // Guardar el nombre del archivo solicitado en sessionStorage
+    const requestedFileName = window.location.pathname.split('/').pop();
+    sessionStorage.setItem('requestedFileName', requestedFileName);
+
+    // Redirigir a la página de login
+    window.location.href = 'login_video.html';
+}
+
+
+  
+  // Función para manejar el cambio en el input de archivo PDF
+  document.getElementById('pdfInput').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+
+      // Función para leer el archivo PDF y mostrarlo en el visor
+      reader.onload = function(e) {
+        const pdfData = e.target.result;
+        const loadingTask = pdfjsLib.getDocument({data: pdfData});
+
+        // Cargar el visor de PDF
+        loadingTask.promise.then(function(pdf) {
+          // Configurar la vista de páginas individuales
+          const viewer = document.getElementById('pdfViewer');
+          viewer.innerHTML = ''; // Limpiar el visor antes de cargar las páginas del PDF
+          for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+            // Crear un lienzo para cada página del PDF
+            const canvas = document.createElement('canvas');
+            canvas.className = 'pdfPage';
+            viewer.appendChild(canvas);
+
+            // Renderizar la página en el lienzo
+            pdf.getPage(pageNumber).then(function(page) {
+              const viewport = page.getViewport({ scale: 1.5 });
+              const context = canvas.getContext('2d');
+              canvas.height = viewport.height;
+              canvas.width = viewport.width;
+              const renderContext = {
+                canvasContext: context,
+                viewport: viewport
+              };
+              page.render(renderContext);
+            });
+          }
+        }, function(reason) {
+          console.error('Error al cargar el PDF: ' + reason);
+        });
+      };
+         // Una vez que se cargue el PDF, establece pdfLoaded en true
+      pdfLoaded = true;
+    
+
+      // Leer el archivo PDF como una URL de datos
+      reader.readAsArrayBuffer(file);
+    }
+  });
+
+  let selectedTeam = '';
+  let minutes = 15;
+  let seconds = 0;
+  let timer;
+  let pdfLoaded = false; // Variable para rastrear si se ha cargado un archivo PDF
+
+  function selectTeam(teamName) {
+  if (!pdfLoaded) {
+    alert("Primero debes cargar un archivo PDF antes de seleccionar un equipo.");
+    document.getElementById('teamDropdown').selectedIndex = 0;
+    return;
+  }
+
+  // Resto del código para seleccionar el equipo...
+  selectedTeam = teamName;
+  document.getElementById('selectedTeamLogo').src = `img app/${teamName.toLowerCase()}.png`;
+  clearInterval(timer); // Detiene el temporizador actual, si existe
+  score = 0; // Reinicia los goles
+  updateScoreboard(); // Actualiza el marcador de goles
+  minutes = 15; // Reinicia los minutos
+  seconds = 0; // Reinicia los segundos
+  document.getElementById('time').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`; // Actualiza el tiempo en la interfaz
+  startTimer(); // Inicia el temporizador nuevamente
+  updateFloatingWidget(); // Actualiza el widget flotante cuando se selecciona un nuevo equipo
+  updateContainerBackground(); // Actualiza el fondo del contenedor según el equipo seleccionado
+
+   // Obtener el elemento de audio de fondo y reproducirlo
+   const backgroundAudio = document.getElementById('backgroundAudio');
+  backgroundAudio.currentTime = 0; // Reiniciar el audio desde el principio
+  backgroundAudio.play();
+}
+
+  function startTimer() {
+    timer = setInterval(updateTime, 1000);
+  }
+
+  function updateTime() {
+    seconds--;
+    if (seconds < 0) {
+      minutes--;
+      seconds = 59;
+    }
+    if (minutes === 0 && seconds === 0) {
+      clearInterval(timer);
+    }
+    document.getElementById('time').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    document.getElementById('floatingTime').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`; // Actualiza el tiempo en el widget flotante
+  }
+
+
+  let teamsData = {};
+
+  let score = 0;
+
+  function incrementScore() {
+  if (!selectedTeam) {
+    alert("Debes subir el pdf primero.");
+    return;
+  }
+  
+  score++;
+  if (!teamsData[selectedTeam]) {
+    teamsData[selectedTeam] = { goals: 0, autogoals: 0 };
+  }
+  teamsData[selectedTeam].goals++;
+  updateScoreboard();
+  updateFloatingWidget();
+  showNotification('¡GOOOOOOL🥳!', false);
+}
+
+function decrementScore() {
+  if (!selectedTeam) {
+    alert("Debes subir el pdf primero.");
+    return;
+  }
+  
+  if (score > 0) {
+    score--;
+    if (!teamsData[selectedTeam]) {
+      teamsData[selectedTeam] = { goals: 0, autogoals: 0 };
+    }
+    teamsData[selectedTeam].autogoals++;
+    updateScoreboard();
+    updateFloatingWidget();
+    showNotification('Autogol😭', true);
+  }
+}
+
+function updateScoreboard() {
+  document.getElementById('teamScore').innerText = score;
+  document.getElementById('floatingScore').innerHTML = `<b style="font-size: 24px;">${score}</b> gol`;
+}
+
+function saveResult() {
+  const positionsList = document.getElementById('positionsList');
+  const existingTeamItem = [...positionsList.children].find(item => item.innerText.includes(selectedTeam));
+  
+  if (existingTeamItem) {
+    const currentGoals = parseInt(existingTeamItem.innerText.split(' goles')[0].split(': ')[1]);
+    existingTeamItem.innerHTML = `<span>${existingTeamItem.querySelector('span').innerText}</span> <img class="team-logo-small" src="img app/${selectedTeam.toLowerCase()}.png" alt="${selectedTeam}"> ${selectedTeam}: ${currentGoals + score} goles`;
+  } else {
+    const positionItem = document.createElement('li');
+    positionItem.classList.add('position-item');
+    const positions = positionsList.children.length + 1;
+    positionItem.innerHTML = `<span>${positions}º</span> <img class="team-logo-small" src="img app/${selectedTeam.toLowerCase()}.png" alt="${selectedTeam}"> ${selectedTeam}: ${score} goles`;
+    positionsList.appendChild(positionItem);
+  }
+
+  const positionsArray = Array.from(positionsList.children);
+  positionsArray.sort((a, b) => {
+    const scoreA = parseInt(a.innerText.split(' goles')[0].split(': ')[1]);
+    const scoreB = parseInt(b.innerText.split(' goles')[0].split(': ')[1]);
+    return scoreB - scoreA;
+  });
+  positionsArray.forEach((position, index) => {
+    position.querySelector('span').innerText = `${index + 1}º`;
+    positionsList.appendChild(position);
+  });
+
+  score = 0;
+  updateScoreboard();
+  minutes = 15;
+  seconds = 0;
+  document.getElementById('time').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  document.getElementById('floatingTime').innerHTML = `<b style="font-size: 24px;">${minutes}:${seconds < 10 ? '0' : ''}${seconds}</b>`;
+  updateFloatingWidget();
+  updateContainerBackground();
+}
+
+  
+
+  // Función para mostrar la notificación de goles y autogoles
+  function showNotification(message, isError) {
+    const notification = document.getElementById('notification');
+    notification.innerText = message;
+    notification.classList.toggle('error', isError);
+    notification.style.display = 'block';
+    if (message === '¡GOOOOOOL🥳!') {
+        const goalAudio = document.getElementById('goalAudio');
+        goalAudio.currentTime = 7.9; // Inicia desde el segundo 8
+        goalAudio.playbackRate = 1.0; // Aumenta la velocidad de reproducción (ejemplo: 1.5 veces más rápido)
+        goalAudio.play();
+        setTimeout(() => {
+          goalAudio.pause();
+          goalAudio.currentTime = 0; // Reinicia el audio para la próxima reproducción
+          goalAudio.playbackRate = 1.0; // Restaura la velocidad de reproducción normal
+        }, 4000);
+      }
+    setTimeout(() => {
+      notification.style.display = 'none';
+    }, 2000); // Oculta la notificación después de 1/9 segundos, para 1 seg sería 1000
+  }
+
+  // Actualizar el widget flotante con la información del equipo seleccionado
+  function updateFloatingWidget() {
+    const teamLogo = document.querySelector('.selected-team .team-logo').src;
+    const teamScore = document.getElementById('teamScore').innerText;
+    document.getElementById('floatingLogo').src = teamLogo;
+    document.getElementById('floatingScore').innerHTML = `<b style="font-size: 24px;">${teamScore}</b> gol`;
+  }
+
+  // Función para controlar el posicionamiento del contenedor de posiciones (que aprezca desde..)
+  window.addEventListener('scroll', function() {
+    const positionsContainer = document.getElementById('positionsContainer');
+    const container = document.querySelector('.container');
+    const containerRect = container.getBoundingClientRect();
+    const scrollY = window.scrollY || window.pageYOffset;
+    const containerBottom = containerRect.top + containerRect.height;
+
+    if (scrollY >= containerBottom && positionsContainer.style.position !== 'fixed') {
+      positionsContainer.style.position = 'fixed';
+      positionsContainer.style.top = 'calc(50% - 50px)'; // Ajustar la posición al centro
+      positionsContainer.style.left = containerRect.left + 'px'; // Ajustar la posición a la izquierda
+    } else if (scrollY < containerBottom && positionsContainer.style.position !== 'absolute') {
+      positionsContainer.style.position = 'absolute';
+      positionsContainer.style.top = '';
+      positionsContainer.style.left = '';
+    }
+  });
+
+  // Función para actualizar el fondo del contenedor según el equipo seleccionado
+  function updateContainerBackground() {
+    const container = document.getElementById('container');
+    switch(selectedTeam) {
+      case 'España':
+        container.style.background = 'linear-gradient(#F4A811, #C98A03)';
+        break;
+      case 'Inglaterra':
+        container.style.background = 'linear-gradient(#0E395F, #061E3D)';
+        break;
+      case 'Italia':
+        container.style.background = 'linear-gradient(#0057B9, #003D6B)';
+        break;
+      case 'Portugal':
+        container.style.background = 'linear-gradient(#EE1928, #A6101D)';
+        break;
+      case 'Francia':
+        container.style.background = 'linear-gradient(#0057B9, #003D6B)';
+        break;
+      case 'Alemania':
+        container.style.background = 'linear-gradient(#F4A811, #C98A03)';
+        break;
+      case 'Suiza':
+        container.style.background = 'linear-gradient(#EE1928, #A6101D)';
+        break;
+      default:
+        container.style.background = '#f0f0f0';
+    }
+  }
+
+
+// DOM comentarios VAR..
+const commentsContainer = document.getElementById('comments-container');
+
+// Verificar si ya existe el textarea antes de crearlo
+if (!document.getElementById('comment-text')) {
+  // Crear el textarea
+  const textarea = document.createElement('textarea');
+  textarea.id = 'comment-text';
+  textarea.placeholder = 'Comentarios VAR...';
+
+  // Añadir el textarea al contenedor
+  commentsContainer.appendChild(textarea);
+}
+
+// Obtener el botón de enviar
+const submitButton = document.getElementById('submit-button');
+let textarea; // Declaración global de textarea
+// Añadir evento de clic al botón de enviar
+submitButton.addEventListener('click', () => {
+  const commentText = textarea.value;
+  if (commentText.trim() !== '') {
+    addCommentToStats(commentText);
+    textarea.value = ''; // Limpiar el textarea
+  }
+});
+
+
+// Función para añadir el comentario a la página STATS
+function addCommentToStats(comment) {
+  const selectedTeam = document.getElementById('teamDropdown').value; // Obtener el equipo seleccionado
+
+  const commentsSection = document.getElementById('stored-comments');
+
+  // Verificar si ya existe un contenedor para el equipo seleccionado
+  let teamContainer = commentsSection.querySelector(`.${selectedTeam.toLowerCase()}-comments`);
+  let commentList;
+  if (!teamContainer) {
+    // Si no existe, crear un nuevo contenedor para el equipo
+    teamContainer = document.createElement('div');
+    teamContainer.classList.add(`${selectedTeam.toLowerCase()}-comments`, 'team-container');
+    
+    const teamLogo = document.createElement('img');
+    teamLogo.src = `img app/${selectedTeam.toLowerCase()}.png`;
+    teamLogo.alt = selectedTeam;
+    teamLogo.classList.add('team-logo-small');
+    teamContainer.appendChild(teamLogo);
+    
+    const teamInfo = document.createElement('div');
+    teamInfo.classList.add('team-info');
+    
+    const teamName = document.createElement('h4');
+    teamName.textContent = selectedTeam;
+    teamName.classList.add('team-name');
+    teamInfo.appendChild(teamName);
+    teamContainer.appendChild(teamInfo);
+
+    commentList = document.createElement('div');
+    commentList.classList.add('comment-list');
+    teamContainer.appendChild(commentList);
+
+    commentsSection.appendChild(teamContainer);
+  } else {
+    commentList = teamContainer.querySelector('.comment-list');
+  }
+
+  // Crear el elemento del comentario
+  const commentItem = document.createElement('div');
+  commentItem.className = 'comment';
+
+  const commentText = document.createElement('span');
+  commentText.textContent = comment;
+
+  const deleteButton = document.createElement('button');
+  deleteButton.className = 'delete-button';
+  deleteButton.textContent = '✓';
+  deleteButton.addEventListener('click', () => {
+    commentItem.remove();
+  });
+
+  commentItem.appendChild(deleteButton);
+  commentItem.appendChild(commentText);
+
+  // Agregar el comentario al contenedor de la lista de comentarios
+  commentList.appendChild(commentItem);
+}
+
+// Función para configurar los event listeners después de cargar el HTML
+function setupEventListeners() {
+  // Configurar el evento de clic para el botón de eliminar comentario
+  const deleteButtons = document.querySelectorAll('.delete-button');
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      button.parentElement.remove(); // Elimina el comentario del DOM
+    });
+  });
+
+  // Configurar el evento de clic para el botón de enviar comentario
+  const submitButton = document.getElementById('submit-button');
+  submitButton.addEventListener('click', () => {
+    const commentText = document.getElementById('comment-text').value;
+    if (commentText.trim() !== '') {
+      addCommentToStats(commentText);
+      document.getElementById('comment-text').value = ''; // Limpiar el textarea
+    }
+  });
+}
+
+  //Función para guardado del html
+  document.getElementById('recordButton').addEventListener('click', function() {
+  // Reinicia los goles a 0
+  score = 0;
+  updateScoreboard(); // Actualiza el marcador de goles
+
+  // Reinicia el tiempo a 15 minutos y 0 segundos
+  clearInterval(timer); // Detiene el temporizador actual, si existe
+  minutes = 15;
+  seconds = 0;
+  document.getElementById('time').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`; // Actualiza el tiempo en la interfaz
+  startTimer(); // Inicia el temporizador nuevamente
+
+  // Guarda el archivo HTML
+  
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit'
+  }).replace(/\//g, '-');
+  const filename = `Fecha_Eurocopa_${formattedDate}.html`;
+  const htmlContent = document.documentElement.outerHTML;
+  const blob = new Blob([htmlContent], { type: 'text/html' });
+  const downloadLink = document.createElement('a');
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = filename;
+  downloadLink.click();
+});
+
+
+// Función Botón HOME Para un desplazamiento suave AL INICIO
+document.getElementById('homeButton').addEventListener('click', function() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // Para un desplazamiento suave
+    });
+
+});
+
+//función actualizar tbla de posición acumulada
+// Función para actualizar la tabla acumulada con los datos del equipo seleccionado
+function updateAccumulatedTable() {
+  const accumulatedTableBody = document.getElementById('accumulatedTable').querySelector('tbody');
+  const teamData = teamsData[selectedTeam];
+
+  // Si no hay datos del equipo seleccionado, no hacer nada
+  if (!teamData) return;
+
+  // Buscar la fila del equipo seleccionado en la tabla
+  let teamRow = null;
+  const rows = accumulatedTableBody.querySelectorAll('tr');
+  rows.forEach(row => {
+    if (row.children[2].innerText === selectedTeam) {
+      teamRow = row;
+    }
+  });
+
+  // Si la fila del equipo seleccionado existe, actualizarla
+  if (teamRow) {
+    const goalsCell = teamRow.children[3];
+    const autogoalsCell = teamRow.children[4];
+    const netGoalsCell = teamRow.children[5];
+
+    goalsCell.innerText = parseInt(goalsCell.innerText, 10) + teamData.goals;
+    autogoalsCell.innerText = parseInt(autogoalsCell.innerText, 10) + teamData.autogoals;
+    netGoalsCell.innerText = parseInt(goalsCell.innerText, 10) - parseInt(autogoalsCell.innerText, 10);
+  } else {
+    // Si la fila del equipo seleccionado no existe, crearla
+    const row = document.createElement('tr');
+
+    const positionCell = document.createElement('td');
+    row.appendChild(positionCell);
+
+    const logoCell = document.createElement('td');
+    const teamLogo = document.createElement('img');
+    teamLogo.src = `img app/${selectedTeam.toLowerCase()}.png`;
+    teamLogo.alt = selectedTeam;
+    teamLogo.classList.add('team-logo-small');
+    logoCell.appendChild(teamLogo);
+    row.appendChild(logoCell);
+
+    const teamCell = document.createElement('td');
+    teamCell.innerText = selectedTeam;
+    row.appendChild(teamCell);
+
+    const goalsCell = document.createElement('td');
+    goalsCell.innerText = teamData.goals;
+    row.appendChild(goalsCell);
+
+    const autogoalsCell = document.createElement('td');
+    autogoalsCell.innerText = teamData.autogoals;
+    row.appendChild(autogoalsCell);
+
+    const netGoalsCell = document.createElement('td');
+    netGoalsCell.innerText = teamData.goals - teamData.autogoals;
+    row.appendChild(netGoalsCell);
+
+    accumulatedTableBody.appendChild(row);
+  }
+
+  // Ordenar la tabla por el total de goles netos
+  const rowsArray = Array.from(accumulatedTableBody.rows);
+  rowsArray.sort((a, b) => {
+    const netGoalsA = parseInt(a.cells[5].innerText);
+    const netGoalsB = parseInt(b.cells[5].innerText);
+    return netGoalsB - netGoalsA;
+  });
+
+  // Actualizar las posiciones y reinsertar las filas ordenadas
+  rowsArray.forEach((row, index) => {
+    row.cells[0].innerText = `${index + 1}º`;
+    accumulatedTableBody.appendChild(row);
+  });
+
+  // Restablecer los datos del equipo seleccionado después de actualizar la tabla
+  teamsData[selectedTeam] = { goals: 0, autogoals: 0 };
+}
+
+// Llamar a esta función después de cargar el HTML guardado
+document.addEventListener('DOMContentLoaded', () => {
+  setupEventListeners();
+  
+});
+
+// Variable para controlar si el audio de fondo ya se reprodujo
+let backgroundAudioPlayed = false;
+
+// Agregar evento de clic al documento
+document.addEventListener('click', function() {
+  // Verificar si el audio de fondo ya se reprodujo
+  if (!backgroundAudioPlayed) {
+    // Obtener el elemento de audio de fondo
+    const backgroundAudio = document.getElementById('backgroundAudio');
+    
+    // Reproducir el audio
+    backgroundAudio.play();
+    
+    // Marcar que el audio ya se reprodujo
+    backgroundAudioPlayed = true;
+  }
+});
+
+
+</script>
+</body>
+</html>
